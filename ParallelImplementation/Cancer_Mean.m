@@ -1,0 +1,10 @@
+#! /usr/bin/octave -qf
+
+fid = fopen ("Cancer_Mean.dat", "r");
+data = dlmread("Cancer_Mean.dat",",",0,0);
+mean = data(:,1);
+cancer = data(:,2);
+bar(cancer, mean);
+title("Accuracy of cancer types        ( XLABEL: 1. BREAST CANCER    2. PROSTATE CANCER    3. LUNG CANCER    4. COLON CANCER )");
+xlabel("Cancer Types");
+ylabel("Level of accuracy");
