@@ -1,0 +1,177 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+#include <math.h>
+#include <string.h>
+#include "knn.h"
+
+#define STRINGLENGTH 3000
+
+int main()
+{
+	//Global var
+	struct Node *Sample;
+	//struct Node Validation;
+	int Atttr_Num=0;
+	char *Atttr_Seq;
+	int Sample_Num=0;
+	char *predict_attr_char[MAX_ATTRIBUTES];
+	int predict_attr[MAX_ATTRIBUTES];
+	FILE *fp_features;
+	char delims[] = ",";
+	char *res=NULL;
+ 	char ch[STRINGLENGTH],str[STRINGLENGTH];
+	int predict_attr_count=0;
+	
+	int i;
+
+	Sample=(struct Node *)malloc(sizeof(struct Node)*MAX_SAMPLE);
+	Atttr_Seq=(char *)malloc(sizeof(char)*MAX_ATTRIBUTES);
+	for(i=0;i<MAX_ATTRIBUTES;i++)
+		predict_attr_char[i]=(char *)malloc(sizeof(char)*STRINGLENGTH);	
+
+	
+	int correct = 0;
+	Sample_Num = 0;
+	
+	char* filename;
+
+	//int num_knn = 0;
+	
+	int k_value = 3;
+
+	/* Initialize predict_attr array to -1 */
+        for(i=0;i<MAX_ATTRIBUTES;i++)
+	 predict_attr[i]=-1;
+	
+	
+	filename="cancer_data_all_1400.arff";
+
+	printf("\n\n=======which attribute do you want to predict?========\n");
+	printf("*Select from following:\n");
+	
+	Sample=readfile(filename,&Sample_Num,&Atttr_Num,Atttr_Seq);
+	
+	
+	/* Begin - Reading selected features and passing it to predict_attr array */
+
+	fp_features = fopen("final_features.txt","r");
+	if(fp_features==NULL)
+	{
+		printf("UNABLE TO OPEN FILE\n");
+		return 0;	
+	}
+
+	
+	while(fgets(ch,sizeof(ch),fp_features))
+	  {
+		printf("In while 1\n");
+	   i=0;
+	   strcpy(str,ch);
+	   res= NULL;
+	   res = strtok(str, delims);
+	    while(res != NULL ) {
+		printf("In while 2\n");
+	      	strcpy(predict_attr_char[i],res);
+		printf("pac - %s ",predict_attr_char[i]);
+		predict_attr[i]=atoi(predict_attr_char[i]);
+		
+	      res = strtok( NULL, delims );
+	     i++;
+	    }
+	  }
+  	fclose(fp_features);
+	for(i=0;i<MAX_ATTRIBUTES;i++)	
+		{
+		  if(predict_attr[i]!=-1)
+		   predict_attr_count++;
+		}
+        printf("Predict_attr_count = %d\n",predict_attr_count);
+
+
+
+	printf("Predict_attr array is:\n");
+	for(i=0;i<predict_attr_count;i++)
+	 	printf("%d ",predict_attr[i]);
+ 	
+	
+        
+	
+
+        /* End - Reading selected features and passing it to predict_attr array */ 
+
+	int num_knn[predict_attr_count];
+	
+	for(i=0;i<predict_attr_count;i++)
+	 num_knn[i]=0;
+
+
+	if(Sample==NULL)
+	{
+		printf("UNABLE TO OPEN FILE\n");
+		return 0;	
+	}
+	
+	//scanf("%d",&predict_attr);
+
+		for(i=0;i<predict_attr_count;i++)
+        {
+		if(Atttr_Seq[predict_attr[i]] == 'r'){
+			num_knn[i] = 1;
+		}else{
+			printf("wrong number, program shutting down\n\n");
+			return 0;
+		}
+	}
+
+	printf("\n\n========What k value do you want to use?========\n\n");
+	printf("\nplease enter:");
+	scanf("%d",&k_value);
+	
+	//predict numeric value
+
+for(i=0;i<predict_attr_count;i++)
+	printf("num_knn [%d] = %d\n",i,num_knn[i]);
+
+int k,t;
+float  actural[predict_attr_count], result[predict_attr_count];
+for(k=0;k<predict_attr_count;k++)
+  {
+	correct=0;		
+	if(num_knn[k] == 1){
+		for(i = 0; i < Sample_Num;i++){
+			t = 0;
+			while(Sample[t].validated ==1){
+				t++;
+			};
+			Sample[t].validated = 1;
+			
+				actural[k] = Sample[t].NumericAttributes[predict_attr[k]];
+				result[k] = NUM_KNN(t,k_value,predict_attr[k],Sample,&Sample_Num,&Atttr_Num,Atttr_Seq);
+			
+				if(absv(actural[k],result[k])/actural[k] < 0.4){
+				//printf("feature=%d ,Correct Prediction, predict %f actual %f\n",predict_attr[k],result[k],actural[k]);
+				correct++;
+				}
+				
+			}
+			// if this value is within 20% of actual
+			//then treat it as correct prediction i.e., belongs to the class label given in the training sample
+			
+			
+		}
+	printf("========Total %d |Correct %d |Correct rate %f========\n"
+			,Sample_Num, correct,(float)correct/Sample_Num);
+
+	/* Invalidate the samples for validating them for next feature */
+	for(i = 0; i < Sample_Num;i++)
+	{
+	   Sample[i].validated = 0;	
+	}
+
+   }
+
+
+
+	return 0;
+}
