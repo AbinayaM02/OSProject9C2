@@ -1,9 +1,0 @@
-%
-@relation cancer
-@attribute BR_BR8T real
-@attribute BR_BR10T real
-@attribute BR_BR14T real
-@attribute BR_BR16T real
-@attribute BR_BR17T real
-@data
-50.53,20,20,55.49,25.9
