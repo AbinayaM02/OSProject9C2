@@ -1,0 +1,32 @@
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart"]});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['No.of Records', 'CPU', 'GPU'],
+          ['400',  5.852,  1.515],
+          ['600',  14.166, 1.522],
+          ['800',  26.445, 1.54],
+          ['1000',  38.962,1.562],
+	  ['1200',  52.755,1.568],
+	  ['1400',  78,1.579]
+        ]);
+
+        var options = {
+          title: 'CPU v/s GPU Performance',
+	  vAxis: {title: "Time(in seconds)"},
+          hAxis: {title: "# of records"}
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+      }
+    </script>
+  </head>
+  <body>
+    <div id="chart_div" style="width: 900px; height: 500px;"></div>
+  </body>
+</html>
