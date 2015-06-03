@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      var dataTable = new google.visualization.DataTable();
+      dataTable.addColumn('number', 'Voltage (V)');
+      dataTable.addColumn('number', 'Current (mA.)');
+      dataTable.addRows([
+        [new Date(2008, 0, 1), 1],
+        [new Date(2008, 1, 14), 2],
+        [new Date(2008, 9, 14), 12],
+        [new Date(2008, 10, 14), 22],
+        [new Date(2009, 1, 1), 30]
+      ]);
+
+      var dataView = new google.visualization.DataView(dataTable);
+      dataView.setColumns([{calc: function(data, row) { return data.getFormattedValue(row, 0); }, type:'string'}, 1]);
+
+      var chart = new google.visualization.LineChart(document.getElementById('containerID'));
+      var options = {
+        width: 400, height: 240,
+        legend: 'none',
+        pointSize: 5
+      };
+      chart.draw(dataView, options);
+    </script>
+  </head>
+  <body>
+    <div id="chart_div" style="width: 900px; height: 500px;"></div>
+  </body>
+</html>
